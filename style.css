@@ -14,6 +14,7 @@
 .hs-slide {
     display: flex;
     height: 400px;
+    position: relative;
     width: 100%;
 }
 
@@ -96,4 +97,13 @@
     top: 22px;
     transform: rotate(-38deg);
     width: 12px;
+}
+
+.hs-slide-slot {
+    left: 0;
+    position: absolute;
+}
+
+.hs-xy {
+    overflow: hidden;
 }

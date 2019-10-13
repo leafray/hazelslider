@@ -1,7 +1,7 @@
 // function myPlugin() {
 //     "use strict";
 
-//     var myPlugin = {};
+//     let myPlugin = {};
 
 //     myPlugin.init = function() {
 //         document.body.style.border = '5px solid red';
@@ -31,14 +31,14 @@
     };
 
     HazelSlider.prototype.build = function(opts) {
-        var _ = this,
-            containerWidth,
-            containerHeight,
-            slot = _.container.querySelectorAll('.hs-slot'),
-            _first = 0,
-            _last = slot.length -1,
-            piece = [],
-            _pieces,
+        let _ = this;
+        let containerWidth;
+        let containerHeight;
+        let slot = _.container.querySelectorAll('.hs-slot');
+        let _first = 0;
+        let _last = slot.length -1;
+        let piece = [];
+        let _pieces;
 
         
 
@@ -47,38 +47,43 @@
         containerHeight = typeof(this.height) === 'number' ? this.height : this.container.offsetHeight;
         
         // Image Width & Height
-        for(var i = 0; i <= _last; i++) {
+        for(let i = 0; i <= _last; i++) {
             slot[i].children[0].style.width = containerWidth + 'px';
             slot[i].children[0].style.height = containerHeight + 'px';
         }
 
-        var pieceParent = document.createElement('div');
+        let pieceParent = document.createElement('div');
         pieceParent.className = 'hs-slide-slot';
         
-        // for( var i = 0; i <= _last; i++) {
-            for( var j = 0; j < _.slideX; j++) {
-                var hs = document.createElement('div');
-                hs.className = 'hs-xy hs-x'+ j +'-y';
+        let imgWidth = containerWidth / this.slideX;
+        let imgHeight = containerHeight / this.slideY;
 
-                var image = _.container.querySelectorAll('.hs-img');
-                image[0].getAttribute('src');
+        for( let i = 0; i <= _last; i++) {
 
+            for( let j = 0; j < _.slideX; j++) {
                 
+                let hs = document.createElement('div');
+                hs.className = 'hs-xy hs-x'+ j +'-y';
+                hs.style.width = imgWidth +'px';
+                hs.style.height = imgHeight +'px';
 
-                var hsImg = document.createElement('img');
-                hsImg.src = image[0].getAttribute('src');
+                let image = _.container.querySelectorAll('.hs-img');
+                image[i].getAttribute('src');
+
+                let hsImg = document.createElement('img');
+                hsImg.src = image[i].getAttribute('src');
+                hsImg.style.width = imgWidth +'px';
                 hs.appendChild(hsImg);
 
                 pieceParent.appendChild(hs);
             }
-
-            _pieces = piece.join('');
-        // }
+            
+            slot[i].appendChild(pieceParent.cloneNode(true));
+            pieceParent.innerHTML = '';
+        }
 
         
-        slot[0].appendChild(pieceParent);
 
-        var w = containerWidth / this.slideX;
 
         
     };
