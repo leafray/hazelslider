@@ -55,24 +55,41 @@
         let pieceParent = document.createElement('div');
         pieceParent.className = 'hs-slide-slot';
         
-        let imgWidth = containerWidth / this.slideX;
-        let imgHeight = containerHeight / this.slideY;
+        let slotWidth = containerWidth / this.slideX;
+        let slotHeight = containerHeight / this.slideY;
 
         for( let i = 0; i <= _last; i++) {
+            let countX = 0;
+            let countY = 0;
 
-            for( let j = 0; j < _.slideX; j++) {
-                
+            for( let j = 0; j < _.slideX * _.slideY; j++) {
+                countX++;
+
+                if(j % _.slideX == 0)
+                    countX = 0;
+
+                if(j % _.slideX == 0 && j > 0)
+                    countY++;
+
+                // .HS-XY
                 let hs = document.createElement('div');
                 hs.className = 'hs-xy hs-x'+ j +'-y';
-                hs.style.width = imgWidth +'px';
-                hs.style.height = imgHeight +'px';
+                hs.style.width = slotWidth +'px';
+                hs.style.height = slotHeight +'px';
+                hs.style.left = (slotWidth * countX) +'px';
+                hs.style.top = (slotHeight * countY) +'px';
 
+                if(i > 0)
+                    hs.style.display = 'none';
+
+                // Select all images
                 let image = _.container.querySelectorAll('.hs-img');
-                image[i].getAttribute('src');
 
+                // Create HS XY image
                 let hsImg = document.createElement('img');
-                hsImg.src = image[i].getAttribute('src');
-                hsImg.style.width = imgWidth +'px';
+                hsImg.src = image[i].getAttribute('data-src');
+                hsImg.style.width = containerWidth +'px';
+                hsImg.style.height = containerHeight +'px';
                 hs.appendChild(hsImg);
 
                 pieceParent.appendChild(hs);

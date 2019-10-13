@@ -12,14 +12,12 @@
 }
 
 .hs-slide {
-    display: flex;
     height: 400px;
-    position: relative;
     width: 100%;
 }
 
 .hs-slot {
-    display: flex;
+    position: absolute;
 }
 
 .hs-slide img {
@@ -102,8 +100,11 @@
 .hs-slide-slot {
     left: 0;
     position: absolute;
+    top: 0;
 }
 
 .hs-xy {
+    /* float: left; */
+    position: absolute;
     overflow: hidden;
 }
