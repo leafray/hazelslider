@@ -2,8 +2,9 @@
 Hazel Slider
 
 
-##1. Call the HazelSider
+## 1. Call the HazelSider
 
+``` Javascript
 new HazelSlider({
     container: '.hs-container',
     slideX: 6,
@@ -12,3 +13,5 @@ new HazelSlider({
     //height: 600,
     imageHeightRatio: 50 // Default 46
 });
+
+```
