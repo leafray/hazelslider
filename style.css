@@ -12,7 +12,7 @@
 }
 
 .hs-slide {
-    height: 400px;
+    /* height: 400px; */
     width: 100%;
 }
 
@@ -101,6 +101,10 @@
     left: 0;
     position: absolute;
     top: 0;
+}
+
+.hs-slide-slot img {
+    position: absolute;
 }
 
 .hs-xy {

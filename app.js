@@ -1,20 +1,3 @@
-// function myPlugin() {
-//     "use strict";
-
-//     let myPlugin = {};
-
-//     myPlugin.init = function() {
-//         document.body.style.border = '5px solid red';
-//     };
-
-
-//     alert('asdf');
-//     return myPlugin;
-// };
-
-// myPlugin();
-// myPlugin.init();
-
 (function() {
 
     "use strict";
@@ -23,9 +6,9 @@
         this.container = typeof(options.container) == 'string' ? document.querySelector(options.container) : document.querySelector('.hs-container');
         this.slideX = options.slideX;
         this.slideY = options.slideY;
-        this.width = options.width || null;
-        this.height = options.height || null;
-
+        this.width = typeof(options.width) == 'undefined' ? '100%' : options.width;
+        this.height = options.height;
+        this.imageHeightRatio = 46;
 
         this.build(options);
     };
@@ -41,10 +24,17 @@
         let _pieces;
 
         
-
+        // Container First Width
+        let containerFirstWidth = typeof(_.width) == 'string' ? parseFloat(_.width) + '%' : parseInt(_.width) + 'px';
+        _.container.style.width = containerFirstWidth;
         
-        containerWidth = typeof(this.width) === 'number' ? this.width : this.container.offsetWidth;
-        containerHeight = typeof(this.height) === 'number' ? this.height : this.container.offsetHeight;
+        // Container First Height
+        let containerFirstHeight = typeof(_.height) == 'undefined' ? ((_.container.offsetWidth * _.imageHeightRatio) / 100) + 'px' : parseInt(_.height) + 'px';
+        _.container.style.height = containerFirstHeight;
+        
+        // Container Width and Height
+        containerWidth = _.container.offsetWidth;
+        containerHeight = _.container.offsetHeight;
         
         // Image Width & Height
         for(let i = 0; i <= _last; i++) {
@@ -55,8 +45,8 @@
         let pieceParent = document.createElement('div');
         pieceParent.className = 'hs-slide-slot';
         
-        let slotWidth = containerWidth / this.slideX;
-        let slotHeight = containerHeight / this.slideY;
+        let slotWidth = containerWidth / _.slideX;
+        let slotHeight = containerHeight / _.slideY;
 
         for( let i = 0; i <= _last; i++) {
             let countX = 0;
@@ -79,7 +69,8 @@
                 hs.style.left = (slotWidth * countX) +'px';
                 hs.style.top = (slotHeight * countY) +'px';
 
-                if(i > 0)
+                // Hide all slots if 'i' bigger than 0
+                if(i != 4)
                     hs.style.display = 'none';
 
                 // Select all images
@@ -88,8 +79,12 @@
                 // Create HS XY image
                 let hsImg = document.createElement('img');
                 hsImg.src = image[i].getAttribute('data-src');
+                hsImg.className = 'hs-img-piece';
                 hsImg.style.width = containerWidth +'px';
                 hsImg.style.height = containerHeight +'px';
+
+                hsImg.style.left = '-'+ (slotWidth * countX) +'px';
+                hsImg.style.top = '-'+ (slotHeight * countY) +'px';
                 hs.appendChild(hsImg);
 
                 pieceParent.appendChild(hs);
@@ -99,9 +94,9 @@
             pieceParent.innerHTML = '';
         }
 
+
+        console.log(typeof(screen.width + '%'));
         
-
-
         
     };
 
@@ -110,9 +105,10 @@
 })();
 
 new HazelSlider({
-    // container: '.hs-container',
-    slideX: 5,
-    slideY: 5,
-    // width: 960,
-    // height: 400,
+    container: '.hs-container',
+    slideX: 6,
+    slideY: 6,
+    width: '100%', // if you want to use % then you will use like '100%'. if you don't need % then just use number like 500
+    // height: 600,
+    //imageHeightRatio: 50 // Default 46
 });
