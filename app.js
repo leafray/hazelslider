@@ -10,10 +10,10 @@
         this.height = options.height;
         this.imageHeightRatio = 46;
 
-        this.build(options);
+        this.build();
     };
 
-    HazelSlider.prototype.build = function(opts) {
+    HazelSlider.prototype.build = function() {
         let _ = this;
         let containerWidth;
         let containerHeight;
@@ -25,11 +25,11 @@
 
         
         // Container First Width
-        let containerFirstWidth = typeof(_.width) == 'string' ? parseFloat(_.width) + '%' : parseInt(_.width) + 'px';
+        const containerFirstWidth = typeof(_.width) == 'string' ? parseFloat(_.width) + '%' : parseInt(_.width) + 'px';
         _.container.style.width = containerFirstWidth;
         
         // Container First Height
-        let containerFirstHeight = typeof(_.height) == 'undefined' ? ((_.container.offsetWidth * _.imageHeightRatio) / 100) + 'px' : parseInt(_.height) + 'px';
+        const containerFirstHeight = typeof(_.height) == 'undefined' ? ((_.container.offsetWidth * _.imageHeightRatio) / 100) + 'px' : parseInt(_.height) + 'px';
         _.container.style.height = containerFirstHeight;
         
         // Container Width and Height
@@ -69,8 +69,29 @@
                 hs.style.left = (slotWidth * countX) +'px';
                 hs.style.top = (slotHeight * countY) +'px';
 
-                // Hide all slots if 'i' bigger than 0
-                if(i != 4)
+                let _TransformTimeDir = Math.ceil(Math.random() * (2 - 0.1) + 0.1);
+
+                const _transform = {
+                    _A : 1,
+                    _B : 0.05,
+                    _C : 0.1,
+                    // for matrix()
+                    // _D : _TransformTimeDir == 1 ? Math.random() * (0.8 - 0.72) + 0.72 : Math.random() * (-0.8 - (-0.72)) + (-0.72),
+                    // for rotate()
+                    _D : _TransformTimeDir == 1 ? Math.random() * (5 - 1) + 1 : Math.random() * (-5 - (-1)) + (-1),
+                    _X : 0,
+                    _Y : 0,
+                    _sX : 0.55, // 0.55 is normal for rotate(), 0.75 is normal for matrix()
+                    _sY : 0.55  // 0.55 is normal for rotate(), 0.75 is normal for matrix()
+                }
+                
+                // with matrix()
+                // hs.style.transform = 'matrix('+ _transform._A +','+ _transform._B +','+ _transform._C +','+_transform._D+','+ _transform._X +','+ _transform._Y +') scale('+ _transform._sX +','+ _transform._sY +')';
+                // with rotate()
+                hs.style.transform = 'rotate('+ _transform._D +'deg) scale('+ _transform._sX +','+ _transform._sY +')';
+
+                // Hide all slots except slot[0]
+                if(i != 0)
                     hs.style.display = 'none';
 
                 // Select all images
@@ -93,13 +114,14 @@
             slot[i].appendChild(pieceParent.cloneNode(true));
             pieceParent.innerHTML = '';
         }
+        this.init();
 
 
-        console.log(typeof(screen.width + '%'));
-        
-        
     };
 
+    HazelSlider.prototype.init = function() {
+
+    };
 
 
 })();
