@@ -13,7 +13,8 @@
         this.transformDegMin = typeof(options.transformDegMin) == 'number' ? options.transformDegMin : 1;
         this._rotateX = typeof(options._rotateX) == 'number' ? options._rotateX : 0.65;
         this._rotateY = typeof(options._rotateY) == 'number' ? options._rotateY : 0.65;
-        this.animateTime = typeof(options.animateTime) == 'number' ? options.animateTime : 0.6
+        this.animateTime = typeof(options.animateTime) == 'number' ? options.animateTime : 0.6;
+        this.delay = typeof(options.delay) == 'number' ? options.delay : 6000;
 
         this.build();
 
@@ -26,8 +27,6 @@
         let slot = _.container.querySelectorAll('.hs-slot');
         let _first = 0;
         let _last = slot.length -1;
-        let piece = [];
-        let _pieces;
 
         
         // Container First Width
@@ -96,7 +95,7 @@
                     _sY : _._rotateY  // 0.55 - 0.65 is normal for rotate(), 0.75 is normal for matrix()
                 };
                 
-                // if refresh page then show slot[0] normally
+                // if when refresh page then show slot[0] normally
                 if( i != 0 ) {
                     // with matrix()
                     // hs.style.transform = 'matrix('+ _transform._A +','+ _transform._B +','+ _transform._C +','+_transform._D+','+ _transform._X +','+ _transform._Y +') scale('+ _transform._sX +','+ _transform._sY +')';
@@ -133,9 +132,9 @@
         }
         
         _.btnInit(_);
+        _.autoSlide(_);
 
     };
-
     
     HazelSlider.prototype.btnInit = function(_this) {
 
@@ -230,6 +229,26 @@
             xySlots[i].style.transition = 'transform '+ _this.animateTime +'s, opacity '+ _this.animateTime +'s, visibility '+ _this.animateTime +'s';
         }
     };
+
+    HazelSlider.prototype.autoSlide = function(_this) {
+        
+        let _interval;
+
+        let _hover = function() {
+            _this.btnBuild('next', _this);
+        };
+        
+        _interval = setInterval(_hover, _this.delay);
+        
+        
+        _this.container.addEventListener('mouseover', function() {
+            clearInterval(_interval);
+        });
+
+        _this.container.addEventListener('mouseout', function() {
+            _interval = setInterval(_hover, _this.delay);
+        });
+    }
     
 
 
@@ -247,5 +266,5 @@ new HazelSlider({
     _rotateX: 0.65, // Default 0.65
     _rotateY: 0.65, // Default 0.65
     animateTime: 1.2, // Default 0.6
-
+    delay: 4000, // Default 6000 (6 seconds)
 });
