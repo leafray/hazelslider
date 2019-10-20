@@ -9,6 +9,11 @@
         this.width = typeof(options.width) == 'undefined' ? '100%' : options.width;
         this.height = options.height;
         this.imageHeightRatio = 46;
+        this.transformDegMax = typeof(options.transformDegMax) == 'number' ? options.transformDegMax : 25;
+        this.transformDegMin = typeof(options.transformDegMin) == 'number' ? options.transformDegMin : 1;
+        this._rotateX = typeof(options._rotateX) == 'number' ? options._rotateX : 0.65;
+        this._rotateY = typeof(options._rotateY) == 'number' ? options._rotateY : 0.65;
+        this.animateTime = typeof(options.animateTime) == 'number' ? options.animateTime : 0.6
 
         this.build();
 
@@ -74,8 +79,8 @@
                 
                 let _TransformTimeDir = Math.ceil(Math.random() * (2 - 0.1) + 0.1);
                 const transformDeg = {
-                    _Max: 55,
-                    _Min: 1
+                    _Max: _.transformDegMax,
+                    _Min: _.transformDegMin
                 };
                 const _transform = {
                     _A : 1,
@@ -87,8 +92,8 @@
                     _D : _TransformTimeDir == 1 ? Math.random() * (transformDeg._Max - transformDeg._Min) + transformDeg._Min : Math.random() * (-transformDeg._Max - (-transformDeg._Min)) + (-transformDeg._Min),
                     _X : 0,
                     _Y : 0,
-                    _sX : 0.45, // 0.55 is normal for rotate(), 0.75 is normal for matrix()
-                    _sY : 0.45  // 0.55 is normal for rotate(), 0.75 is normal for matrix()
+                    _sX : _._rotateX, // 0.55 - 0.65 is normal for rotate(), 0.75 is normal for matrix()
+                    _sY : _._rotateY  // 0.55 - 0.65 is normal for rotate(), 0.75 is normal for matrix()
                 };
                 
                 // if refresh page then show slot[0] normally
@@ -127,101 +132,102 @@
             pieceParent.innerHTML = '';
         }
         
-        this.btnBuild();
+        _.btnInit(_);
 
     };
 
     
-    HazelSlider.prototype.btnInit = function() {
-        var btn = 'sss';
+    HazelSlider.prototype.btnInit = function(_this) {
 
         let nextBtn = document.querySelector('#nextBtn');
         nextBtn.addEventListener('click', function(e) {
-            btn = 'asdf';
-            console.log(e.target);
+            _this.btnBuild('next', _this);
             
         });
-        console.log(btn);
 
-        // let prevBtn = document.querySelector('#prevBtn');
-        // prevBtn.addEventListener('click', function() {
-        //     this.btnBuild('prev');
-        // });
+        let prevBtn = document.querySelector('#prevBtn');
+        prevBtn.addEventListener('click', function() {
+            _this.btnBuild('prev', _this);
+        });
     };
 
-    HazelSlider.prototype.btnBuild = function() {
-        this.btnInit();
+    HazelSlider.prototype.btnBuild = function(btn, _this) {
         // Find active slot
         let nodes = Array.prototype.slice.call( document.querySelector('.hs-slide').children );
         let hsActive = nodes.indexOf( document.getElementsByClassName('hs-active')[0] );
         
-        let hsActiveOld = hsActive;
+        let hsOldActive = hsActive;
 
         // Remove current active slot classname
         nodes[hsActive].classList.remove('hs-active');
 
-        if(hsActive == nodes.length -1)
+        // if btn == next
+        if(btn == 'next' && hsActive == nodes.length -1)
             hsActive = -1;
+
+        // if btn == prev
+        if(btn == 'prev' && hsActive == 0)
+            hsActive = nodes.length;
         
+        let hsNewActive = btn == 'next' ? hsActive +1 : hsActive -1;
+
         // get all slots
         let allHsSlots = document.querySelectorAll('.hs-slot');
+
+        allHsSlots[hsOldActive].children[0].src = allHsSlots[hsOldActive].children[0].getAttribute('data-src');
         
         // Add new slot active classname
-        allHsSlots[hsActive +1].classList.add('hs-active');
-        allHsSlots[hsActive +1].style.zIndex = 19;
+        allHsSlots[hsNewActive].classList.add('hs-active');
+        allHsSlots[hsNewActive].style.zIndex = 19;
 
-        // get all .hs-xy in new active slot
-
-        for (let i = 0; i < nodes.length; i++) {
-            // if( i != xySlots.length -1 ){
-
-                allHsSlots[hsActiveOld].style.zIndex = 17;
-                // allHsSlots[hsActiveOld].style.opacity = 0;
-                // allHsSlots[hsActiveOld].style.visibility = 'hidden';
-                // allHsSlots[hsActiveOld].style.transition = 'transform .6s, z-index 1.3s, opacity 1.3s, visibility 1.3s';
-
-                let deActiveSlots = allHsSlots[hsActiveOld].querySelectorAll('.hs-xy');
-                for (let j = 0; j < deActiveSlots.length; j++) {
-                    let _TransformTimeDir = Math.ceil(Math.random() * (2 - 0.1) + 0.1);
-                    const transformDeg = {
-                        _Max: 55,
-                        _Min: 1
-                    };
-                    const _transform = {
-                        _A : 1,
-                        _B : 0.05,
-                        _C : 0.1,
-                        // for matrix()
-                        // _D : _TransformTimeDir == 1 ? Math.random() * (0.8 - 0.72) + 0.72 : Math.random() * (-0.8 - (-0.72)) + (-0.72),
-                        // for rotate()
-                        _D : _TransformTimeDir == 1 ? Math.random() * (transformDeg._Max - transformDeg._Min) + transformDeg._Min : Math.random() * (-transformDeg._Max - (-transformDeg._Min)) + (-transformDeg._Min),
-                        _X : 0,
-                        _Y : 0,
-                        _sX : 0.45, // 0.55 is normal for rotate(), 0.75 is normal for matrix()
-                        _sY : 0.45  // 0.55 is normal for rotate(), 0.75 is normal for matrix()
-                    };
-
-                    deActiveSlots[j].style.transform = 'rotate('+ _transform._D +'deg) scale('+ _transform._sX +','+ _transform._sY +')';
-                    deActiveSlots[j].style.opacity = 0;
-                    deActiveSlots[j].style.visibility = 'hidden';
-                    deActiveSlots[j].style.transition = 'transform .6s, opacity 1.3s, visibility 1.3s';
-                }
-            // }
+        for( let i = 0; i < nodes.length; i++ ) {
+            if(i != hsOldActive)
+                allHsSlots[i].children[0].src = '';
         }
 
 
-        allHsSlots[hsActive +1].style.zIndex = 19;
-        // allHsSlots[hsActive +1].style.opacity = 1;
-        // allHsSlots[hsActive +1].style.visibility = 'visible';
-        // allHsSlots[hsActive +1].style.transition = 'transform .6s, z-index 1.3s, opacity 1.3s, visibility 1.3s';
-        console.log(hsActive);
-        
-        let xySlots = allHsSlots[hsActive +1].querySelectorAll('.hs-xy');
+
+        for (let i = 0; i < nodes.length; i++) {
+            allHsSlots[hsOldActive].style.zIndex = 17;
+
+            let deActiveSlots = allHsSlots[hsOldActive].querySelectorAll('.hs-xy');
+            for (let j = 0; j < deActiveSlots.length; j++) {
+                let _TransformTimeDir = Math.ceil(Math.random() * (2 - 0.1) + 0.1);
+                const transformDeg = {
+                    _Max: _this.transformDegMax,
+                    _Min: _this.transformDegMin
+                };
+                const _transform = {
+                    _A : 1,
+                    _B : 0.05,
+                    _C : 0.1,
+                    // for matrix()
+                    // _D : _TransformTimeDir == 1 ? Math.random() * (0.8 - 0.72) + 0.72 : Math.random() * (-0.8 - (-0.72)) + (-0.72),
+                    // for rotate()
+                    _D : _TransformTimeDir == 1 ? Math.random() * (transformDeg._Max - transformDeg._Min) + transformDeg._Min : Math.random() * (-transformDeg._Max - (-transformDeg._Min)) + (-transformDeg._Min),
+                    _X : 0,
+                    _Y : 0,
+                    _sX : _this._rotateX, // 0.55 - 0.65 is normal for rotate(), 0.75 is normal for matrix()
+                    _sY : _this._rotateY  // 0.55 - 0.65 is normal for rotate(), 0.75 is normal for matrix()
+                };
+
+                deActiveSlots[j].style.transform = 'rotate('+ _transform._D +'deg) scale('+ _transform._sX +','+ _transform._sY +')';
+                deActiveSlots[j].style.opacity = 0;
+                deActiveSlots[j].style.visibility = 'hidden';
+                deActiveSlots[j].style.transition = 'transform '+ _this.animateTime +'s, opacity '+ _this.animateTime +'s, visibility '+ _this.animateTime +'s';
+            }
+        }
+
+
+        allHsSlots[hsNewActive].style.zIndex = 19;
+
+        // get all .hs-xy in new active slot
+        let xySlots = allHsSlots[hsNewActive].querySelectorAll('.hs-xy');
         for (let i = 0; i < xySlots.length; i++) {
             xySlots[i].style.transform = 'rotate(0deg) scale(1)';
             xySlots[i].style.opacity = 1;
             xySlots[i].style.visibility = 'visible';
-            xySlots[i].style.transition = 'transform .6s, opacity .3s, visibility .3s';
+            xySlots[i].style.transition = 'transform '+ _this.animateTime +'s, opacity '+ _this.animateTime +'s, visibility '+ _this.animateTime +'s';
         }
     };
     
@@ -235,5 +241,11 @@ new HazelSlider({
     slideY: 6,
     width: '100%', // if you want to use % then you will use like '100%'. if you don't need % then just use number like 500
     // height: 600,
-    //imageHeightRatio: 50 // Default 46
+    //imageHeightRatio: 50, // Default 46
+    transformDegMax: 15, //Default 25
+    transformDegMin: 1, // Default 1
+    _rotateX: 0.65, // Default 0.65
+    _rotateY: 0.65, // Default 0.65
+    animateTime: 1.2, // Default 0.6
+
 });
