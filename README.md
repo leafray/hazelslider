@@ -35,6 +35,6 @@ new HazelSlider({
     transformDegMin: 1, // Default 1
     _rotateX: 0.65, // Default 0.65
     _rotateY: 0.65, // Default 0.65
-    animateTime: 1.2, // Default 0.6
+    animateTime: 1200, // Default 600
 });
 ```

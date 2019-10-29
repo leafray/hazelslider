@@ -13,7 +13,7 @@
         this.transformDegMin = typeof(options.transformDegMin) == 'number' ? options.transformDegMin : 1;
         this._rotateX = typeof(options._rotateX) == 'number' ? options._rotateX : 0.65;
         this._rotateY = typeof(options._rotateY) == 'number' ? options._rotateY : 0.65;
-        this.animateTime = typeof(options.animateTime) == 'number' ? options.animateTime : 0.6;
+        this.animateTime = typeof(options.animateTime) == 'number' ? (options.animateTime / 1000) : 0.6;
         this.delay = typeof(options.delay) == 'number' ? options.delay : 6000;
 
         this.build();
@@ -140,17 +140,31 @@
 
         let nextBtn = document.querySelector('#nextBtn');
         nextBtn.addEventListener('click', function(e) {
+            nextBtn.disabled = true;
             _this.btnBuild('next', _this);
-            
         });
 
         let prevBtn = document.querySelector('#prevBtn');
         prevBtn.addEventListener('click', function() {
+            prevBtn.disabled = true;
             _this.btnBuild('prev', _this);
         });
     };
 
     HazelSlider.prototype.btnBuild = function(btn, _this) {
+
+        let allowReturn = false;
+
+        // Enable to disabled button
+        window.setTimeout(function() {
+            if(btn == 'next')
+                document.getElementById('nextBtn').disabled = false;
+            else
+                document.getElementById('prevBtn').disabled = false;
+            
+            allowReturn = true;    
+        }, (_this.animateTime * 1000));
+        
         // Find active slot
         let nodes = Array.prototype.slice.call( document.querySelector('.hs-slide').children );
         let hsActive = nodes.indexOf( document.getElementsByClassName('hs-active')[0] );
@@ -184,9 +198,8 @@
                 allHsSlots[i].children[0].src = '';
         }
 
-
-
         for (let i = 0; i < nodes.length; i++) {
+            // Change hsOldActive z-index value
             allHsSlots[hsOldActive].style.zIndex = 17;
 
             let deActiveSlots = allHsSlots[hsOldActive].querySelectorAll('.hs-xy');
@@ -218,6 +231,7 @@
         }
 
 
+        // Change hsNewActive z-index value
         allHsSlots[hsNewActive].style.zIndex = 19;
 
         // get all .hs-xy in new active slot
@@ -251,6 +265,7 @@
     }
     
 
+    
 
 })();
 
@@ -265,6 +280,6 @@ new HazelSlider({
     transformDegMin: 1, // Default 1
     _rotateX: 0.65, // Default 0.65
     _rotateY: 0.65, // Default 0.65
-    animateTime: 1.2, // Default 0.6
+    animateTime: 1200, // Default 600
     delay: 4000, // Default 6000 (6 seconds)
 });
